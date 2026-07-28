@@ -26,12 +26,12 @@ class IsStudentUserRole(permissions.BasePermission):
 
 class IsAdminOrReadOnly(permissions.BasePermission):
     """
-    Custom permission to allow read-only access for students/unauthenticated,
-    and write access for admins.
+    Custom permission to allow read-only access for students and unauthenticated users,
+    and write access only for placement officers / admins.
     """
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
-            return request.user and request.user.is_authenticated
+            return True
         return (
             request.user and
             request.user.is_authenticated and
