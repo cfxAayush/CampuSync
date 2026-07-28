@@ -47,51 +47,43 @@ export const AdminDashboard = () => {
   const refreshAll = () => {
     setLoading(true);
     setFetchError(null);
-    fetchStats();
-    fetchJobs();
-    fetchApplications();
-  };
-
-  useEffect(() => {
-    refreshAll();
-  }, [token]);
-
-  const fetchStats = async () => {
+  const refreshAll = async () => {
+    setLoading(true);
+    setFetchError(null);
     try {
-      const res = await axios.get(`${API_BASE}/stats/`);
-      setStats(res.data);
-    } catch (err) {
-      console.error('Failed to fetch stats', err);
-    }
-  };
-
-  const fetchJobs = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/jobs/`);
-      setJobs(res.data);
-    } catch (err) {
-      console.error('Failed to fetch jobs', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchApplications = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/applications/`);
-      setApplications(res.data);
+      const [statsRes, jobsRes, appsRes] = await Promise.all([
+        axios.get(`${API_BASE}/stats/`),
+        axios.get(`${API_BASE}/jobs/`),
+        axios.get(`${API_BASE}/applications/`)
+      ]);
+      setStats(statsRes.data);
+      setJobs(jobsRes.data);
+      setApplications(appsRes.data);
       setFetchError(null);
     } catch (err) {
-      console.error('Failed to fetch applications', err);
-      if (err.response?.status === 401) {
-        setFetchError('Session expired or invalid. Please click Logout and sign in with Admin Officer Login.');
+      console.error('Failed to fetch admin dashboard data', err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        setFetchError('Admin Session Unauthorized. Please click Logout and sign in with Admin Officer Login.');
       } else {
-        setFetchError('Unable to connect to placement server. Please ensure backend service is active on Render.');
+        // Fallback: try individual endpoint fetching
+        try {
+          const jobsRes = await axios.get(`${API_BASE}/jobs/`);
+          setJobs(jobsRes.data);
+          const appsRes = await axios.get(`${API_BASE}/applications/`);
+          setApplications(appsRes.data);
+          setFetchError(null);
+        } catch (e) {
+          setFetchError('Connecting to placement server... Click Retry Sync if data does not appear.');
+        }
       }
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    refreshAll();
+  }, [token]);
 
   // State Machine Status Update Endpoint Call
   const handleStatusChange = async (appId, newStatus) => {
