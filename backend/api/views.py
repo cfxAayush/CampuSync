@@ -21,6 +21,19 @@ from .permissions import IsAdminUserRole, IsStudentUserRole, IsAdminOrReadOnly
 User = get_user_model()
 
 
+def ensure_seeded():
+    """Ensure database has seed jobs and applications if empty"""
+    if not JobPosting.objects.exists():
+        try:
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from seed import seed_database
+            seed_database()
+        except Exception as e:
+            print(f"[!] Auto seed warning: {e}")
+
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
@@ -45,6 +58,7 @@ class JobPostingListCreateView(generics.ListCreateAPIView):
     serializer_class = JobPostingSerializer
 
     def get_queryset(self):
+        ensure_seeded()
         queryset = JobPosting.objects.all()
         # Admin sees all, students see active jobs by default unless filtering
         search = self.request.query_params.get('search', None)
@@ -60,7 +74,7 @@ class JobPostingListCreateView(generics.ListCreateAPIView):
         if job_type:
             queryset = queryset.filter(job_type__iexact=job_type)
 
-        if not (self.request.user.is_authenticated and self.request.user.role == 'ADMIN'):
+        if not (self.request.user.is_authenticated and (self.request.user.role == 'ADMIN' or self.request.user.is_superuser)):
             queryset = queryset.filter(is_active=True)
 
         return queryset
@@ -114,6 +128,7 @@ class ApplicationListView(generics.ListAPIView):
     serializer_class = ApplicationSerializer
 
     def get_queryset(self):
+        ensure_seeded()
         user = self.request.user
         queryset = Application.objects.all()
 
@@ -149,6 +164,7 @@ class PlacementStatsView(APIView):
     permission_classes = [IsAdminUserRole]
 
     def get(self, request):
+        ensure_seeded()
         total_jobs = JobPosting.objects.count()
         total_applications = Application.objects.count()
         total_students = User.objects.filter(role=User.Role.STUDENT).count()
