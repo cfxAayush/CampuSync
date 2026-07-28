@@ -40,7 +40,8 @@ def seed_database():
         role=User.Role.STUDENT,
         department='Computer Science & Engineering',
         cgpa=8.95,
-        phone='+91 91234 56789'
+        phone='+91 91234 56789',
+        resume='resumes/pdf_2.pdf'
     )
     
     student2 = User.objects.create_user(

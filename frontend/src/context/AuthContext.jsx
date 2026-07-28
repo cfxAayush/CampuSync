@@ -17,6 +17,13 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.get(`${API_BASE}/auth/me/`).then((res) => {
+        setUser((prev) => {
+          const updated = { ...prev, ...res.data };
+          localStorage.setItem('user', JSON.stringify(updated));
+          return updated;
+        });
+      }).catch(() => {});
     } else {
       delete axios.defaults.headers.common['Authorization'];
     }

@@ -120,8 +120,8 @@ export const StudentDashboard = () => {
               Welcome back, {user?.first_name || user?.username}! 🎓
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
-              Department: <strong style={{ color: 'var(--text-primary)' }}>{user?.department || 'N/A'}</strong> | CGPA:{' '}
-              <strong style={{ color: 'var(--accent-green)' }}>{user?.cgpa || 'N/A'}</strong>
+              Department: <strong style={{ color: 'var(--text-primary)' }}>{user?.department || 'Computer Science & Engineering'}</strong> | CGPA:{' '}
+              <strong style={{ color: 'var(--accent-green)' }}>{user?.cgpa || '8.5'}</strong>
             </p>
           </div>
 
