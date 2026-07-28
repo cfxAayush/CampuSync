@@ -26,7 +26,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
             'department': self.user.department,
-            'resume': self.user.resume.url if self.user.resume else None
+            'cgpa': self.user.cgpa,
+            'phone': self.user.phone,
+            'resume': self.user.resume.url if self.user.resume else None,
+            'resume_url': self.user.resume.url if self.user.resume else None
         }
         return data
 

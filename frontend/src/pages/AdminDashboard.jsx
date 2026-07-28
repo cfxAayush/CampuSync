@@ -15,7 +15,7 @@ import {
   Filter,
 } from 'lucide-react';
 
-import { API_BASE } from '../config';
+import { API_BASE, SERVER_BASE } from '../config';
 
 export const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -331,19 +331,26 @@ export const AdminDashboard = () => {
                       </td>
 
                       <td>
-                        {app.student_details?.resume_url ? (
-                          <a
-                            href={app.student_details.resume_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-secondary btn-sm"
-                            style={{ gap: '0.3rem', fontSize: '0.775rem' }}
-                          >
-                            <FileText size={13} /> View Resume PDF <ExternalLink size={11} />
-                          </a>
-                        ) : (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No File</span>
-                        )}
+                        {(() => {
+                          const resumeRaw = app.student_details?.resume_url || app.student_details?.resume;
+                          const resumeHref = resumeRaw
+                            ? (resumeRaw.startsWith('http') ? resumeRaw : `${SERVER_BASE}${resumeRaw}`)
+                            : null;
+
+                          return resumeHref ? (
+                            <a
+                              href={resumeHref}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-secondary btn-sm"
+                              style={{ gap: '0.3rem', fontSize: '0.775rem' }}
+                            >
+                              <FileText size={13} /> View Resume PDF <ExternalLink size={11} />
+                            </a>
+                          ) : (
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No File</span>
+                          );
+                        })()}
                       </td>
 
                       <td style={{ minWidth: '200px' }}>
