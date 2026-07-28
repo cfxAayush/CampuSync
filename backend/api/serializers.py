@@ -17,6 +17,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
+        username_or_email = attrs.get('username')
+        if username_or_email and '@' in username_or_email:
+            user_obj = User.objects.filter(email__iexact=username_or_email).first()
+            if user_obj:
+                attrs['username'] = user_obj.username
         data = super().validate(attrs)
         data['user'] = {
             'id': self.user.id,
