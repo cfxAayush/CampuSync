@@ -19,7 +19,7 @@ import {
 import { API_BASE, SERVER_BASE, getFullMediaUrl } from '../config';
 
 export const StudentDashboard = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, token, updateProfile } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ export const StudentDashboard = () => {
   useEffect(() => {
     fetchJobs();
     fetchApplications();
-  }, []);
+  }, [token]);
 
   const fetchJobs = async () => {
     try {

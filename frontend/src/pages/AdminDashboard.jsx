@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import { StatusBadge } from '../components/StatusBadge';
 import {
   Briefcase,
@@ -17,9 +18,8 @@ import {
   X,
 } from 'lucide-react';
 
-import { API_BASE, SERVER_BASE, getFullMediaUrl } from '../config';
-
 export const AdminDashboard = () => {
+  const { token } = useAuth();
   const [stats, setStats] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -47,7 +47,7 @@ export const AdminDashboard = () => {
     fetchStats();
     fetchJobs();
     fetchApplications();
-  }, []);
+  }, [token]);
 
   const fetchStats = async () => {
     try {

@@ -2,6 +2,11 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { API_BASE } from '../config';
 
+const initialToken = localStorage.getItem('accessToken');
+if (initialToken) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${initialToken}`;
+}
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
