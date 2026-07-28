@@ -12,10 +12,10 @@ from api.models import User, JobPosting, Application
 def seed_database():
     print("[+] Seeding Placement Portal Database...")
 
-    # Clear existing non-superuser data
-    Application.objects.all().delete()
-    JobPosting.objects.all().delete()
-    User.objects.filter(is_superuser=False).delete()
+    # Only seed if no jobs exist in DB to preserve production data
+    if JobPosting.objects.exists():
+        print("[!] Job postings already exist in database. Skipping seeding to preserve data.")
+        return
 
     # 1. Create Admin / Placement Officers
     admin_user = User.objects.create_user(
