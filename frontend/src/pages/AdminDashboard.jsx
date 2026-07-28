@@ -44,9 +44,6 @@ export const AdminDashboard = () => {
     requirements: '',
   });
 
-  const refreshAll = () => {
-    setLoading(true);
-    setFetchError(null);
   const refreshAll = async () => {
     setLoading(true);
     setFetchError(null);
@@ -91,8 +88,7 @@ export const AdminDashboard = () => {
       await axios.patch(`${API_BASE}/applications/${appId}/status/`, {
         status: newStatus,
       });
-      fetchApplications();
-      fetchStats();
+      refreshAll();
     } catch (err) {
       alert('Failed to update candidate application status.');
     }
