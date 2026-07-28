@@ -20,7 +20,7 @@ export const Navbar = () => {
           <div className="brand-icon">
             <Briefcase size={22} />
           </div>
-          <span>Placement<span style={{ color: 'var(--accent-primary)' }}>Desk</span></span>
+          <span>Campu<span style={{ color: 'var(--accent-primary)' }}>Sync</span></span>
         </Link>
 
         {isAuthenticated && (

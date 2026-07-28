@@ -67,7 +67,7 @@ export const Login = () => {
           >
             <Briefcase size={26} />
           </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '800' }}>Welcome to PlacementDesk</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '800' }}>Welcome to CampuSync</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
             Sign in to access your student portal or placement cell dashboard
           </p>
