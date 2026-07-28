@@ -30,6 +30,7 @@ export const AdminDashboard = () => {
   const [selectedJobFilter, setSelectedJobFilter] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('');
   const [previewResume, setPreviewResume] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
 
   // Job creation modal state
   const [showCreateJobModal, setShowCreateJobModal] = useState(false);
@@ -43,10 +44,16 @@ export const AdminDashboard = () => {
     requirements: '',
   });
 
-  useEffect(() => {
+  const refreshAll = () => {
+    setLoading(true);
+    setFetchError(null);
     fetchStats();
     fetchJobs();
     fetchApplications();
+  };
+
+  useEffect(() => {
+    refreshAll();
   }, [token]);
 
   const fetchStats = async () => {
@@ -73,8 +80,16 @@ export const AdminDashboard = () => {
     try {
       const res = await axios.get(`${API_BASE}/applications/`);
       setApplications(res.data);
+      setFetchError(null);
     } catch (err) {
       console.error('Failed to fetch applications', err);
+      if (err.response?.status === 401) {
+        setFetchError('Session expired or invalid. Please click Logout and sign in with Admin Officer Login.');
+      } else {
+        setFetchError('Unable to connect to placement server. Please ensure backend service is active on Render.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,6 +157,29 @@ export const AdminDashboard = () => {
 
   return (
     <div className="main-content">
+      {fetchError && (
+        <div
+          style={{
+            padding: '1rem 1.25rem',
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            borderRadius: 'var(--radius-sm)',
+            color: '#F87171',
+            fontSize: '0.9rem',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '1rem',
+          }}
+        >
+          <span>{fetchError}</span>
+          <button className="btn btn-secondary btn-sm" onClick={refreshAll}>
+            Retry Sync
+          </button>
+        </div>
+      )}
+
       {/* Overview Analytics Cards */}
       {stats && (
         <div className="stats-grid">

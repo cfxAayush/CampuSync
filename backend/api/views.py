@@ -132,7 +132,7 @@ class ApplicationListView(generics.ListAPIView):
         user = self.request.user
         queryset = Application.objects.all()
 
-        if user.role == 'ADMIN' or user.is_superuser:
+        if user.role == 'ADMIN' or user.is_staff or user.is_superuser:
             # Filters for placement officer
             job_id = self.request.query_params.get('job_id', None)
             app_status = self.request.query_params.get('status', None)

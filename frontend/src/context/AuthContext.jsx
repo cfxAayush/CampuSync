@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }) => {
       
       setToken(access);
       setUser(userData);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
       localStorage.setItem('user', JSON.stringify(userData));
