@@ -13,9 +13,11 @@ import {
   ExternalLink,
   MessageSquare,
   Filter,
+  Eye,
+  X,
 } from 'lucide-react';
 
-import { API_BASE, SERVER_BASE } from '../config';
+import { API_BASE, SERVER_BASE, getFullMediaUrl } from '../config';
 
 export const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -27,6 +29,7 @@ export const AdminDashboard = () => {
   // Filter state for pipeline
   const [selectedJobFilter, setSelectedJobFilter] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('');
+  const [previewResume, setPreviewResume] = useState(null);
 
   // Job creation modal state
   const [showCreateJobModal, setShowCreateJobModal] = useState(false);
@@ -332,21 +335,33 @@ export const AdminDashboard = () => {
 
                       <td>
                         {(() => {
-                          const resumeRaw = app.student_details?.resume_url || app.student_details?.resume;
-                          const resumeHref = resumeRaw
-                            ? (resumeRaw.startsWith('http') ? resumeRaw : `${SERVER_BASE}${resumeRaw}`)
-                            : null;
+                          const rawUrl = app.student_details?.resume_url || app.student_details?.resume;
+                          const resumeHref = getFullMediaUrl(rawUrl);
+                          const studentName = app.student_details?.first_name 
+                            ? `${app.student_details.first_name} ${app.student_details.last_name || ''}`
+                            : app.student_details?.username || 'Student';
 
                           return resumeHref ? (
-                            <a
-                              href={resumeHref}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="btn btn-secondary btn-sm"
-                              style={{ gap: '0.3rem', fontSize: '0.775rem' }}
-                            >
-                              <FileText size={13} /> View Resume PDF <ExternalLink size={11} />
-                            </a>
+                            <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                              <button
+                                type="button"
+                                className="btn btn-primary btn-sm"
+                                style={{ gap: '0.25rem', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                                onClick={() => setPreviewResume({ url: resumeHref, studentName })}
+                              >
+                                <Eye size={12} /> Preview PDF
+                              </button>
+                              <a
+                                href={resumeHref}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="btn btn-secondary btn-sm"
+                                style={{ padding: '0.25rem 0.4rem' }}
+                                title="Open in new tab"
+                              >
+                                <ExternalLink size={12} />
+                              </a>
+                            </div>
                           ) : (
                             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No File</span>
                           );
@@ -525,6 +540,60 @@ export const AdminDashboard = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Interactive Candidate Resume PDF Modal */}
+      {previewResume && (
+        <div className="modal-overlay" style={{ background: 'rgba(0,0,0,0.85)', zIndex: 9999 }}>
+          <div
+            className="card"
+            style={{
+              width: '92%',
+              maxWidth: '960px',
+              height: '85vh',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '1.25rem',
+              background: 'var(--bg-card)',
+              borderRadius: 'var(--radius-md)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <FileText size={20} style={{ color: 'var(--accent-primary)' }} />
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>
+                  Candidate Resume: {previewResume.studentName}
+                </h3>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <a
+                  href={previewResume.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-secondary btn-sm"
+                >
+                  Open Original PDF <ExternalLink size={12} />
+                </a>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => setPreviewResume(null)}
+                >
+                  <X size={16} /> Close
+                </button>
+              </div>
+            </div>
+            <iframe
+              src={previewResume.url}
+              title="Student Resume PDF"
+              style={{
+                width: '100%',
+                flex: 1,
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-sm)',
+                background: '#fff',
+              }}
+            />
           </div>
         </div>
       )}

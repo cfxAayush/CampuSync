@@ -16,7 +16,7 @@ import {
   Clock,
 } from 'lucide-react';
 
-import { API_BASE, SERVER_BASE } from '../config';
+import { API_BASE, SERVER_BASE, getFullMediaUrl } from '../config';
 
 export const StudentDashboard = () => {
   const { user, updateProfile } = useAuth();
@@ -387,7 +387,7 @@ export const StudentDashboard = () => {
                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>Active Resume PDF</span>
                   </div>
                   <a
-                    href={user.resume.startsWith('http') ? user.resume : `${SERVER_BASE}${user.resume}`}
+                    href={getFullMediaUrl(user.resume_url || user.resume)}
                     target="_blank"
                     rel="noreferrer"
                     className="btn btn-secondary btn-sm"
