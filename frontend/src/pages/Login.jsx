@@ -34,6 +34,17 @@ export const Login = () => {
     } catch (err) {}
   };
 
+  const fillDemoAdmin = async () => {
+    const adminUser = 'admin_officer';
+    const adminPass = 'adminpassword123';
+    setUsername(adminUser);
+    setPassword(adminPass);
+    try {
+      const user = await login(adminUser, adminPass);
+      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
+    } catch (err) {}
+  };
+
   return (
     <div
       style={{
@@ -89,13 +100,13 @@ export const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Username</label>
+            <label className="form-label">Username or Registered Email</label>
             <input
               type="text"
               className="form-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              placeholder="admin_officer or student@university.edu"
               required
             />
           </div>
@@ -122,14 +133,26 @@ export const Login = () => {
           </button>
         </form>
 
-        {/* Demo Student Quick Login Section */}
+        {/* Quick Demo Logins Section */}
         <div
           style={{
-            marginTop: '1.75rem',
-            paddingTop: '1.5rem',
+            marginTop: '1.5rem',
+            paddingTop: '1.25rem',
             borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
           }}
         >
+          <button
+            type="button"
+            onClick={fillDemoAdmin}
+            className="btn btn-primary btn-sm"
+            style={{ width: '100%', justifyContent: 'center' }}
+          >
+            <Shield size={15} /> Try Admin Officer Login
+          </button>
+
           <button
             type="button"
             onClick={fillDemoStudent}
