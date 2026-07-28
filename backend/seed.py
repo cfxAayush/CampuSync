@@ -32,11 +32,11 @@ def seed_database():
 
     # 2. Create Sample Students
     student1 = User.objects.create_user(
-        username='aayush_student',
-        email='aayush@student.edu',
+        username='student_demo',
+        email='student@university.edu',
         password='studentpassword123',
-        first_name='Aayush',
-        last_name='Shrivastava',
+        first_name='Student',
+        last_name='User',
         role=User.Role.STUDENT,
         department='Computer Science & Engineering',
         cgpa=8.95,

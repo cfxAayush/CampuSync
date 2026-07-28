@@ -23,15 +23,9 @@ export const Login = () => {
     }
   };
 
-  const fillDemo = async (roleType) => {
-    let demoUser = '';
-    let demoPass = 'studentpassword123';
-    if (roleType === 'ADMIN') {
-      demoUser = 'admin_officer';
-      demoPass = 'adminpassword123';
-    } else {
-      demoUser = 'aayush_student';
-    }
+  const fillDemoStudent = async () => {
+    const demoUser = 'student_demo';
+    const demoPass = 'studentpassword123';
     setUsername(demoUser);
     setPassword(demoPass);
     try {
@@ -101,7 +95,7 @@ export const Login = () => {
               className="form-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. aayush_student or admin_officer"
+              placeholder="Enter your username"
               required
             />
           </div>
@@ -128,7 +122,7 @@ export const Login = () => {
           </button>
         </form>
 
-        {/* Demo One-Click Login Section */}
+        {/* Demo Student Quick Login Section */}
         <div
           style={{
             marginTop: '1.75rem',
@@ -136,37 +130,14 @@ export const Login = () => {
             borderTop: '1px solid var(--border-color)',
           }}
         >
-          <div
-            style={{
-              fontSize: '0.75rem',
-              textTransform: 'uppercase',
-              fontWeight: '700',
-              color: 'var(--text-muted)',
-              marginBottom: '0.75rem',
-              textAlign: 'center',
-              letterSpacing: '0.05em',
-            }}
+          <button
+            type="button"
+            onClick={fillDemoStudent}
+            className="btn btn-secondary btn-sm"
+            style={{ width: '100%', justifyContent: 'center' }}
           >
-            Demo One-Click Login
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            <button
-              type="button"
-              onClick={() => fillDemo('STUDENT')}
-              className="btn btn-secondary btn-sm"
-              style={{ justifyContent: 'center' }}
-            >
-              <UserCheck size={14} /> Student Demo
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo('ADMIN')}
-              className="btn btn-secondary btn-sm"
-              style={{ justifyContent: 'center', borderColor: 'var(--accent-secondary)' }}
-            >
-              <Shield size={14} style={{ color: '#818CF8' }} /> Admin Demo
-            </button>
-          </div>
+            <UserCheck size={15} /> Try Student Demo Login
+          </button>
         </div>
 
         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
