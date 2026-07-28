@@ -1,0 +1,28 @@
+# Virtual Environments
+venv/
+backend/venv/
+ENV/
+env/
+
+# Node modules & build outputs
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+
+# Environment files
+.env
+frontend/.env
+backend/.env
+
+# IDE & OS files
+.DS_Store
+.vscode/
+.idea/
+*.log
