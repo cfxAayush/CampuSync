@@ -6,14 +6,20 @@ import { Briefcase, Lock, UserCheck, Shield, AlertCircle } from 'lucide-react';
 export const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loading, error } = useAuth();
+  const { login, loading, error, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = await login(username, password);
-      if (user.role === 'ADMIN') {
+      const loggedInUser = await login(username, password);
+      if (loggedInUser.role === 'ADMIN') {
         navigate('/admin/dashboard');
       } else {
         navigate('/student/dashboard');
