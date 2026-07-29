@@ -29,7 +29,7 @@ export const Register = () => {
     try {
       const user = await register(formData);
       navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
-    } catch (err) {
+    } catch {
       // Error handled in AuthContext
     }
   };

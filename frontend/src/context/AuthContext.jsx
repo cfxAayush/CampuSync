@@ -104,17 +104,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (formData) => {
-    try {
-      const res = await axios.patch(`${API_BASE}/auth/me/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      const updatedUser = { ...user, ...res.data };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return res.data;
-    } catch (err) {
-      throw err;
-    }
+    const res = await axios.patch(`${API_BASE}/auth/me/`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    const updatedUser = { ...user, ...res.data };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    return res.data;
   };
 
   return (

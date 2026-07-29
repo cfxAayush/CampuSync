@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Briefcase, User, LogOut, LayoutDashboard, FileText, PlusCircle } from 'lucide-react';
+import { Briefcase, User, LogOut, LayoutDashboard, FileText } from 'lucide-react';
 
 export const Navbar = () => {
-  const { user, logout, isAuthenticated, isAdmin, isStudent } = useAuth();
+  const { user, logout, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 

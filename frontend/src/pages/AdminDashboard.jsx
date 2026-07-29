@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { StatusBadge } from '../components/StatusBadge';
 import {
   Briefcase,
   Users,
   CheckCircle,
   TrendingUp,
   Plus,
-  Edit2,
   Trash2,
   FileText,
   ExternalLink,
-  MessageSquare,
-  Filter,
   Eye,
   X,
   RefreshCw,
 } from 'lucide-react';
 
-import { API_BASE, SERVER_BASE, getFullMediaUrl } from '../config';
+import { API_BASE, getFullMediaUrl } from '../config';
 
 const DEFAULT_STATS = {
   total_jobs: 5,
@@ -111,7 +107,7 @@ const DEFAULT_APPLICATIONS = [
       last_name: 'User',
       department: 'Computer Science & Engineering',
       cgpa: '8.95',
-      resume_url: 'https://campusync-7ffp.onrender.com/media/resumes/pdf_2.pdf'
+      resume_url: '/media/resumes/pdf_2.pdf'
     },
     status: 'INTERVIEWING',
     status_display: 'Interviewing',
@@ -131,7 +127,7 @@ const DEFAULT_APPLICATIONS = [
       last_name: 'User',
       department: 'Computer Science & Engineering',
       cgpa: '8.95',
-      resume_url: 'https://campusync-7ffp.onrender.com/media/resumes/pdf_2.pdf'
+      resume_url: '/media/resumes/pdf_2.pdf'
     },
     status: 'SELECTED',
     status_display: 'Selected',
@@ -151,7 +147,7 @@ const DEFAULT_APPLICATIONS = [
       last_name: 'Verma',
       department: 'Information Technology',
       cgpa: '9.12',
-      resume_url: 'https://campusync-7ffp.onrender.com/media/resumes/pdf_2.pdf'
+      resume_url: '/media/resumes/pdf_2.pdf'
     },
     status: 'IN_REVIEW',
     status_display: 'In Review',
@@ -171,7 +167,7 @@ const DEFAULT_APPLICATIONS = [
       last_name: 'Kumar',
       department: 'Electronics & Comm',
       cgpa: '8.20',
-      resume_url: 'https://campusync-7ffp.onrender.com/media/resumes/pdf_2.pdf'
+      resume_url: '/media/resumes/pdf_2.pdf'
     },
     status: 'APPLIED',
     status_display: 'Applied',
@@ -245,7 +241,7 @@ export const AdminDashboard = () => {
         status: newStatus,
       });
       refreshAll();
-    } catch (err) {
+    } catch {
       // Retain optimistic state gracefully
     }
   };
@@ -259,7 +255,7 @@ export const AdminDashboard = () => {
       await axios.patch(`${API_BASE}/applications/${appId}/status/`, {
         notes: notesText,
       });
-    } catch (err) {
+    } catch {
       // Retain optimistic state
     }
   };
@@ -279,7 +275,7 @@ export const AdminDashboard = () => {
         requirements: '',
       });
       refreshAll();
-    } catch (err) {
+    } catch {
       // Local addition for instant UX response
       const newJob = {
         id: Date.now(),
@@ -299,7 +295,7 @@ export const AdminDashboard = () => {
     try {
       await axios.delete(`${API_BASE}/jobs/${jobId}/`);
       refreshAll();
-    } catch (err) {
+    } catch {
       // Retain deletion state
     }
   };

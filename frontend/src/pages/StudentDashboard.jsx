@@ -13,10 +13,9 @@ import {
   CheckCircle2,
   AlertCircle,
   ExternalLink,
-  Clock,
 } from 'lucide-react';
 
-import { API_BASE, SERVER_BASE, getFullMediaUrl } from '../config';
+import { API_BASE, getFullMediaUrl } from '../config';
 
 export const StudentDashboard = () => {
   const { user, token, updateProfile } = useAuth();
@@ -67,7 +66,7 @@ export const StudentDashboard = () => {
     setApplyLoading(true);
     setApplyMessage(null);
     try {
-      const res = await axios.post(`${API_BASE}/jobs/${jobId}/apply/`);
+      await axios.post(`${API_BASE}/jobs/${jobId}/apply/`);
       setApplyMessage({ type: 'success', text: 'Application submitted successfully!' });
       fetchJobs();
       fetchApplications();
@@ -89,7 +88,7 @@ export const StudentDashboard = () => {
       await updateProfile(formData);
       setUploadSuccess('Resume PDF uploaded and attached to profile!');
       setTimeout(() => setUploadSuccess(''), 4000);
-    } catch (err) {
+    } catch {
       alert('Failed to upload resume PDF.');
     }
   };

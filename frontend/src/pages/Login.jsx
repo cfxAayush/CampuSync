@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Briefcase, Lock, UserCheck, Shield, AlertCircle } from 'lucide-react';
+import { Briefcase, AlertCircle } from 'lucide-react';
 
 export const Login = () => {
   const [username, setUsername] = useState('');
@@ -24,31 +24,9 @@ export const Login = () => {
       } else {
         navigate('/student/dashboard');
       }
-    } catch (err) {
+    } catch {
       // Error handled in AuthContext
     }
-  };
-
-  const fillDemoStudent = async () => {
-    const demoUser = 'student_demo';
-    const demoPass = 'studentpassword123';
-    setUsername(demoUser);
-    setPassword(demoPass);
-    try {
-      const user = await login(demoUser, demoPass);
-      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
-    } catch (err) {}
-  };
-
-  const fillDemoAdmin = async () => {
-    const adminUser = 'admin_officer';
-    const adminPass = 'adminpassword123';
-    setUsername(adminUser);
-    setPassword(adminPass);
-    try {
-      const user = await login(adminUser, adminPass);
-      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
-    } catch (err) {}
   };
 
   return (
@@ -112,7 +90,7 @@ export const Login = () => {
               className="form-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="admin_officer or student@university.edu"
+              placeholder="Enter your username or email"
               required
             />
           </div>
@@ -138,36 +116,6 @@ export const Login = () => {
             {loading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
-
-        {/* Quick Demo Logins Section */}
-        <div
-          style={{
-            marginTop: '1.5rem',
-            paddingTop: '1.25rem',
-            borderTop: '1px solid var(--border-color)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-          }}
-        >
-          <button
-            type="button"
-            onClick={fillDemoAdmin}
-            className="btn btn-primary btn-sm"
-            style={{ width: '100%', justifyContent: 'center' }}
-          >
-            <Shield size={15} /> Try Admin Officer Login
-          </button>
-
-          <button
-            type="button"
-            onClick={fillDemoStudent}
-            className="btn btn-secondary btn-sm"
-            style={{ width: '100%', justifyContent: 'center' }}
-          >
-            <UserCheck size={15} /> Try Student Demo Login
-          </button>
-        </div>
 
         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           Don't have an account?{' '}
