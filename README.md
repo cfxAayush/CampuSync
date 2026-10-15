@@ -21,6 +21,15 @@ A modern, full-stack campus placement & career portal built to streamline job ap
 
 ---
 
+## 🔑 Demo Access Credentials
+
+| Role | Username | Password | Access Capabilities |
+| :--- | :--- | :--- | :--- |
+| **Placement Officer (Admin)** | `admin_officer` | `adminpassword123` | Create/edit jobs, manage candidate application pipeline, add notes, view placement stats & analytics |
+| **Student** | `student_demo` | `studentpassword123` | Search jobs, filter positions, submit 1-click applications, upload resume PDF, track application status |
+
+---
+
 ## 🛠️ Local Development Setup
 
 ### Backend Setup (Django)
@@ -31,12 +40,17 @@ python -m venv venv
 # On Windows:
 venv\Scripts\activate
 # On macOS/Linux:
-# source venv/bin/activate
+source venv/bin/activate
 
 pip install -r requirements.txt
 python manage.py migrate
-python seed.py  # Optional: Seed initial demo data
+python seed.py  # Seed initial demo jobs, users, and applications
 python manage.py runserver
+```
+
+Run test suite:
+```bash
+python manage.py test api
 ```
 
 ### Frontend Setup (React + Vite)
@@ -49,7 +63,26 @@ npm run dev
 
 ---
 
-## 📦 Deployment Configuration
+## 📦 Live Deployment Walkthrough
 
-- **Frontend Environment Variables**: Set `VITE_API_URL` and `VITE_SERVER_URL` in Vercel.
-- **Backend Build Script**: Uses `build.sh` on Render for static collection and database migrations.
+### 1. Backend on Render (Web Service)
+1. Link your GitHub repository on [Render](https://render.com).
+2. Create a new **Web Service** with:
+   - **Root Directory**: `backend`
+   - **Environment**: `Python 3`
+   - **Build Command**: `chmod +x build.sh && ./build.sh`
+   - **Start Command**: `gunicorn placement_portal.wsgi:application`
+3. Environment Variables on Render:
+   - `DEBUG`: `False`
+   - `SECRET_KEY`: `<generate-a-random-secret-key>`
+   - `ALLOWED_HOSTS`: `.onrender.com,localhost,127.0.0.1`
+
+### 2. Frontend on Vercel
+1. Link your GitHub repository on [Vercel](https://vercel.com).
+2. Configure project settings:
+   - **Framework Preset**: `Vite`
+   - **Root Directory**: `frontend`
+3. Environment Variables on Vercel:
+   - `VITE_API_URL`: `https://<your-render-app>.onrender.com/api`
+   - `VITE_SERVER_URL`: `https://<your-render-app>.onrender.com`
+4. Click **Deploy**.

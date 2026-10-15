@@ -26,8 +26,15 @@ export const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const payload = { ...formData };
+    if (!payload.cgpa || payload.role !== 'STUDENT') {
+      delete payload.cgpa;
+    }
+    if (!payload.phone || payload.role !== 'ADMIN') {
+      delete payload.phone;
+    }
     try {
-      const user = await register(formData);
+      const user = await register(payload);
       navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
     } catch {
       // Error handled in AuthContext

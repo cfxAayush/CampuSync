@@ -45,7 +45,7 @@ export const StudentDashboard = () => {
   const fetchJobs = async () => {
     try {
       const res = await axios.get(`${API_BASE}/jobs/`);
-      setJobs(res.data);
+      setJobs(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to fetch jobs', err);
     } finally {
@@ -56,7 +56,7 @@ export const StudentDashboard = () => {
   const fetchApplications = async () => {
     try {
       const res = await axios.get(`${API_BASE}/applications/`);
-      setApplications(res.data);
+      setApplications(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to fetch applications', err);
     }

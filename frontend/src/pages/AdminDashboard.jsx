@@ -211,8 +211,8 @@ export const AdminDashboard = () => {
       ]);
 
       const liveStats = statsRes.data;
-      const liveJobs = Array.isArray(jobsRes.data) && jobsRes.data.length > 0 ? jobsRes.data : DEFAULT_JOBS;
-      const liveApps = Array.isArray(appsRes.data) && appsRes.data.length > 0 ? appsRes.data : DEFAULT_APPLICATIONS;
+      const liveJobs = Array.isArray(jobsRes.data) ? jobsRes.data : DEFAULT_JOBS;
+      const liveApps = Array.isArray(appsRes.data) ? appsRes.data : DEFAULT_APPLICATIONS;
 
       setStats(liveStats || DEFAULT_STATS);
       setJobs(liveJobs);
@@ -531,7 +531,7 @@ export const AdminDashboard = () => {
 
                       <td>
                         {(() => {
-                          const rawUrl = app.student_details?.resume_url || app.student_details?.resume || 'https://campusync-7ffp.onrender.com/media/resumes/pdf_2.pdf';
+                          const rawUrl = app.student_details?.resume_url || app.student_details?.resume || '/media/resumes/pdf_2.pdf';
                           const resumeHref = getFullMediaUrl(rawUrl);
                           const studentName = app.student_details?.first_name 
                             ? `${app.student_details.first_name} ${app.student_details.last_name || ''}`

@@ -20,28 +20,68 @@ from .permissions import IsAdminUserRole, IsStudentUserRole, IsAdminOrReadOnly
 
 User = get_user_model()
 
+# crud operations are perfomed in the views.py file other 
+from django.core.management import call_command
 
 def ensure_seeded():
-    """Ensure database has seed jobs and applications if empty"""
-    if not JobPosting.objects.exists():
-        try:
+    """Ensure database has migrations applied and seed jobs/users exist"""
+    try:
+        if not User.objects.filter(role=User.Role.ADMIN).exists():
             import sys
             import os
             sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             from seed import seed_database
             seed_database()
+    except Exception as db_err:
+        try:
+            print(f"[!] Running automatic database migration: {db_err}")
+            call_command('migrate', interactive=False)
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from seed import seed_database
+            seed_database()
+        except Exception as seed_err:
+            print(f"[!] Auto-seed warning: {seed_err}")
+
+
+class HealthCheckView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        ensure_seeded()
+        try:
+            total_jobs = JobPosting.objects.count()
+            total_users = User.objects.count()
+            return Response({
+                "status": "healthy",
+                "database": "connected",
+                "jobs_count": total_jobs,
+                "users_count": total_users,
+            }, status=status.HTTP_200_OK)
         except Exception as e:
-            print(f"[!] Auto seed warning: {e}")
+            return Response({
+                "status": "degraded",
+                "database_error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        ensure_seeded()
+        return super().post(request, *args, **kwargs)
 
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = UserRegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        ensure_seeded()
+        return super().post(request, *args, **kwargs)
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):

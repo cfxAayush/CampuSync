@@ -9,10 +9,13 @@ from .views import (
     ApplyJobView,
     ApplicationListView,
     ApplicationStatusUpdateView,
-    PlacementStatsView
+    PlacementStatsView,
+    HealthCheckView
 )
 
 urlpatterns = [
+    # Health Check
+    path('health/', HealthCheckView.as_view(), name='health_check'),
     # Auth Endpoints
     path('auth/register/', RegisterView.as_view(), name='register'),
     path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),

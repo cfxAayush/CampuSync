@@ -23,6 +23,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             if user_obj:
                 attrs['username'] = user_obj.username
         data = super().validate(attrs)
+        
+        request = self.context.get('request')
+        resume_url = None
+        if self.user.resume:
+            resume_url = request.build_absolute_uri(self.user.resume.url) if request else self.user.resume.url
+
         data['user'] = {
             'id': self.user.id,
             'username': self.user.username,
@@ -33,8 +39,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'department': self.user.department,
             'cgpa': self.user.cgpa,
             'phone': self.user.phone,
-            'resume': self.user.resume.url if self.user.resume else None,
-            'resume_url': self.user.resume.url if self.user.resume else None
+            'resume': resume_url,
+            'resume_url': resume_url
         }
         return data
 
@@ -49,6 +55,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'password', 'confirm_password',
             'first_name', 'last_name', 'role', 'phone', 'department', 'cgpa'
         )
+
+    def validate_cgpa(self, value):
+        if value == '' or value is None:
+            return None
+        return value
 
     def validate(self, attrs):
         if attrs['password'] != attrs['confirm_password']:

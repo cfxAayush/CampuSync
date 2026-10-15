@@ -9,6 +9,8 @@ node_modules/
 frontend/node_modules/
 dist/
 frontend/dist/
+staticfiles/
+backend/staticfiles/
 
 # Python cache & bytecode
 __pycache__/
