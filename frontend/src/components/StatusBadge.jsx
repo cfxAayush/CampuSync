@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Eye, MessageSquare, CheckCircle, XCircle } from 'lucide-react';
+import { Clock, Search, Calendar, CheckCircle2, XCircle, Check } from 'lucide-react';
 
 export const StatusBadge = ({ status }) => {
   const getStatusConfig = (st) => {
@@ -7,38 +7,38 @@ export const StatusBadge = ({ status }) => {
       case 'APPLIED':
         return {
           label: 'Applied',
-          className: 'applied',
-          icon: <Clock size={13} />,
+          className: 'badge badge-applied',
+          icon: <Clock size={12} strokeWidth={2.2} />,
         };
       case 'IN_REVIEW':
         return {
           label: 'In Review',
-          className: 'in_review',
-          icon: <Eye size={13} />,
+          className: 'badge badge-review',
+          icon: <Search size={12} strokeWidth={2.2} />,
         };
       case 'INTERVIEWING':
         return {
           label: 'Interviewing',
-          className: 'interviewing',
-          icon: <MessageSquare size={13} />,
+          className: 'badge badge-interview',
+          icon: <Calendar size={12} strokeWidth={2.2} />,
         };
       case 'SELECTED':
         return {
           label: 'Selected',
-          className: 'selected',
-          icon: <CheckCircle size={13} />,
+          className: 'badge badge-selected',
+          icon: <CheckCircle2 size={12} strokeWidth={2.2} />,
         };
       case 'REJECTED':
         return {
           label: 'Rejected',
-          className: 'rejected',
-          icon: <XCircle size={13} />,
+          className: 'badge badge-rejected',
+          icon: <XCircle size={12} strokeWidth={2.2} />,
         };
       default:
         return {
           label: st || 'Unknown',
-          className: 'applied',
-          icon: <Clock size={13} />,
+          className: 'badge badge-neutral',
+          icon: <Clock size={12} strokeWidth={2.2} />,
         };
     }
   };
@@ -46,9 +46,9 @@ export const StatusBadge = ({ status }) => {
   const config = getStatusConfig(status);
 
   return (
-    <span className={`status-badge ${config.className}`}>
+    <span className={config.className}>
       {config.icon}
-      {config.label}
+      <span>{config.label}</span>
     </span>
   );
 };
@@ -63,11 +63,26 @@ export const ApplicationPipelineTracker = ({ currentStatus }) => {
 
   if (currentStatus === 'REJECTED') {
     return (
-      <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-        <StatusBadge status="REJECTED" />
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-          Application was not selected for this role.
-        </p>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0.75rem 1rem',
+          backgroundColor: 'var(--status-rejected-bg)',
+          border: '1px solid var(--status-rejected-border)',
+          borderRadius: 'var(--radius-sm)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <XCircle size={16} style={{ color: 'var(--status-rejected-text)' }} />
+          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--status-rejected-text)' }}>
+            Application Closed
+          </span>
+        </div>
+        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          Candidate not moved forward for this cycle
+        </span>
       </div>
     );
   }
@@ -80,21 +95,77 @@ export const ApplicationPipelineTracker = ({ currentStatus }) => {
   const currentIdx = getStageIndex(currentStatus);
 
   return (
-    <div className="pipeline-steps">
-      {stages.map((stage, idx) => {
-        const isCompleted = idx < currentIdx;
-        const isActive = idx === currentIdx;
+    <div style={{ padding: '0.5rem 0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+        {/* Background connecting line */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '12px',
+            left: '20px',
+            right: '20px',
+            height: '2px',
+            backgroundColor: 'var(--border-color)',
+            zIndex: 0,
+          }}
+        />
 
-        return (
-          <div
-            key={stage.key}
-            className={`pipeline-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
-          >
-            <div className="step-node">{idx + 1}</div>
-            <div className="step-label">{stage.label}</div>
-          </div>
-        );
-      })}
+        {stages.map((stage, idx) => {
+          const isCompleted = idx < currentIdx;
+          const isCurrent = idx === currentIdx;
+
+          return (
+            <div
+              key={stage.key}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0.35rem',
+                zIndex: 1,
+                minWidth: '60px',
+              }}
+            >
+              <div
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  transition: 'all 0.15s ease',
+                  backgroundColor: isCompleted
+                    ? 'var(--status-selected-text)'
+                    : isCurrent
+                    ? 'var(--accent-primary)'
+                    : 'var(--bg-surface)',
+                  color: isCompleted || isCurrent ? '#FFFFFF' : 'var(--text-muted)',
+                  border: isCompleted
+                    ? '2px solid var(--status-selected-text)'
+                    : isCurrent
+                    ? '2px solid var(--accent-primary)'
+                    : '2px solid var(--border-color)',
+                }}
+              >
+                {isCompleted ? <Check size={13} strokeWidth={2.8} /> : idx + 1}
+              </div>
+              <span
+                style={{
+                  fontSize: '0.71875rem',
+                  fontWeight: isCurrent ? 600 : 500,
+                  color: isCurrent ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  textAlign: 'center',
+                }}
+              >
+                {stage.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

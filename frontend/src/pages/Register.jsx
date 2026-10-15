@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Briefcase, AlertCircle } from 'lucide-react';
+import { GraduationCap, Building2, AlertCircle, ArrowRight } from 'lucide-react';
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,8 +17,14 @@ export const Register = () => {
     cgpa: '',
   });
 
-  const { register, loading, error } = useAuth();
+  const { register, loading, error, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,8 +40,8 @@ export const Register = () => {
       delete payload.phone;
     }
     try {
-      const user = await register(payload);
-      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
+      const newUser = await register(payload);
+      navigate(newUser.role === 'ADMIN' ? '/admin/dashboard' : '/student/dashboard');
     } catch {
       // Error handled in AuthContext
     }
@@ -44,146 +50,152 @@ export const Register = () => {
   return (
     <div
       style={{
-        minHeight: 'calc(100vh - 80px)',
+        minHeight: 'calc(100vh - 64px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '2rem 1rem',
+        padding: '2.5rem 1rem',
       }}
     >
       <div
         className="card"
         style={{
           width: '100%',
-          maxWidth: '560px',
-          background: 'var(--bg-card)',
-          boxShadow: 'var(--shadow-lg)',
-          border: '1px solid var(--border-color)',
+          maxWidth: '540px',
+          padding: '2.25rem',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
           <div
-            className="brand-icon"
-            style={{ width: '44px', height: '44px', margin: '0 auto 0.75rem auto' }}
+            style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--accent-primary)',
+              color: '#FFFFFF',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '1rem',
+            }}
           >
-            <Briefcase size={24} />
+            <GraduationCap size={22} strokeWidth={2.2} />
           </div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: '800' }}>Create Placement Account</h2>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem' }}>
+            Create an Account
+          </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            Register as a Student applicant or College Placement Officer
+            Register as a student applicant or college placement coordinator
           </p>
         </div>
 
         {error && (
-          <div
-            style={{
-              padding: '0.75rem 1rem',
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: 'var(--radius-sm)',
-              color: '#F87171',
-              fontSize: '0.85rem',
-              marginBottom: '1.25rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <AlertCircle size={16} />
+          <div className="alert alert-error">
+            <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Role Selection Segmented Buttons */}
-          <div className="form-group">
-            <label className="form-label">Select Account Role</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+          {/* Professional Segmented Role Selector */}
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label className="form-label">Account Role</label>
+            <div className="segmented-control">
               <button
                 type="button"
-                className={`btn ${formData.role === 'STUDENT' ? 'btn-primary' : 'btn-secondary'}`}
+                className={`segmented-button ${formData.role === 'STUDENT' ? 'active' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'STUDENT' })}
-                style={{ justifyContent: 'center' }}
               >
-                🎓 Student
+                <GraduationCap size={15} />
+                <span>Student</span>
               </button>
               <button
                 type="button"
-                className={`btn ${formData.role === 'ADMIN' ? 'btn-primary' : 'btn-secondary'}`}
+                className={`segmented-button ${formData.role === 'ADMIN' ? 'active' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'ADMIN' })}
-                style={{ justifyContent: 'center' }}
               >
-                🏢 Placement Officer / Admin
+                <Building2 size={15} />
+                <span>Placement Officer</span>
               </button>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
             <div className="form-group">
-              <label className="form-label">First Name</label>
+              <label className="form-label" htmlFor="first_name">First Name</label>
               <input
+                id="first_name"
                 type="text"
                 name="first_name"
                 className="form-input"
                 value={formData.first_name}
                 onChange={handleChange}
+                placeholder="e.g. Aarav"
                 required
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Last Name</label>
+              <label className="form-label" htmlFor="last_name">Last Name</label>
               <input
+                id="last_name"
                 type="text"
                 name="last_name"
                 className="form-input"
                 value={formData.last_name}
                 onChange={handleChange}
+                placeholder="e.g. Sharma"
                 required
               />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
             <div className="form-group">
-              <label className="form-label">Username</label>
+              <label className="form-label" htmlFor="reg_username">Username</label>
               <input
+                id="reg_username"
                 type="text"
                 name="username"
                 className="form-input"
                 value={formData.username}
                 onChange={handleChange}
+                placeholder="e.g. aarav_s"
                 required
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Email Address</label>
+              <label className="form-label" htmlFor="reg_email">Email Address</label>
               <input
+                id="reg_email"
                 type="email"
                 name="email"
                 className="form-input"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="aarav@univ.edu"
                 required
               />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
             <div className="form-group">
-              <label className="form-label">Department / Branch</label>
+              <label className="form-label" htmlFor="department">Department / Branch</label>
               <input
+                id="department"
                 type="text"
                 name="department"
                 className="form-input"
                 value={formData.department}
                 onChange={handleChange}
-                placeholder="e.g. Computer Science"
+                placeholder="Computer Science"
               />
             </div>
-            {formData.role === 'STUDENT' && (
+            {formData.role === 'STUDENT' ? (
               <div className="form-group">
-                <label className="form-label">Current CGPA</label>
+                <label className="form-label" htmlFor="cgpa">Cumulative CGPA</label>
                 <input
+                  id="cgpa"
                   type="number"
                   step="0.01"
                   min="0"
@@ -195,42 +207,46 @@ export const Register = () => {
                   placeholder="e.g. 8.75"
                 />
               </div>
-            )}
-            {formData.role === 'ADMIN' && (
+            ) : (
               <div className="form-group">
-                <label className="form-label">Phone Number</label>
+                <label className="form-label" htmlFor="phone">Contact Phone</label>
                 <input
+                  id="phone"
                   type="text"
                   name="phone"
                   className="form-input"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+91 9876543210"
+                  placeholder="+91 98765 43210"
                 />
               </div>
             )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
             <div className="form-group">
-              <label className="form-label">Password</label>
+              <label className="form-label" htmlFor="reg_password">Password</label>
               <input
+                id="reg_password"
                 type="password"
                 name="password"
                 className="form-input"
                 value={formData.password}
                 onChange={handleChange}
+                placeholder="At least 6 characters"
                 required
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Confirm Password</label>
+              <label className="form-label" htmlFor="confirm_password">Confirm Password</label>
               <input
+                id="confirm_password"
                 type="password"
                 name="confirm_password"
                 className="form-input"
                 value={formData.confirm_password}
                 onChange={handleChange}
+                placeholder="Re-enter password"
                 required
               />
             </div>
@@ -239,17 +255,18 @@ export const Register = () => {
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ width: '100%', marginTop: '0.75rem' }}
+            style={{ width: '100%', marginTop: '0.5rem', padding: '0.65rem' }}
             disabled={loading}
           >
             {loading ? 'Creating Account...' : 'Register Account'}
+            {!loading && <ArrowRight size={15} />}
           </button>
         </form>
 
         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          Already registered?{' '}
-          <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
-            Sign In
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
+            Sign in
           </Link>
         </div>
       </div>

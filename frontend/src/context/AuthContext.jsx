@@ -70,7 +70,15 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       return userData;
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Invalid username or password';
+      const errData = err.response?.data;
+      let msg = 'Invalid username or password.';
+      if (errData) {
+        if (typeof errData === 'string' && (errData.includes('<!doctype') || errData.includes('<html'))) {
+          msg = 'Authentication server temporarily unavailable. Please try again.';
+        } else if (errData.detail) {
+          msg = errData.detail;
+        }
+      }
       setError(msg);
       throw new Error(msg);
     } finally {
@@ -87,13 +95,20 @@ export const AuthProvider = ({ children }) => {
       return await login(formData.username, formData.password);
     } catch (err) {
       const errData = err.response?.data;
-      let msg = 'Registration failed.';
+      let msg = 'Registration failed. Please check your information.';
       if (errData) {
-        if (typeof errData === 'string') msg = errData;
-        else if (errData.detail) msg = errData.detail;
-        else {
+        if (typeof errData === 'string') {
+          if (errData.includes('<!doctype') || errData.includes('<html')) {
+            msg = 'Server database connection error. Please try again shortly.';
+          } else {
+            msg = errData;
+          }
+        } else if (errData.detail) {
+          msg = errData.detail;
+        } else if (typeof errData === 'object') {
           const firstKey = Object.keys(errData)[0];
-          msg = `${firstKey}: ${errData[firstKey][0]}`;
+          const val = errData[firstKey];
+          msg = `${firstKey}: ${Array.isArray(val) ? val[0] : val}`;
         }
       }
       setError(msg);
